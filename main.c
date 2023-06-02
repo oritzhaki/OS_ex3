@@ -34,7 +34,7 @@ int getDataLength(const char* path){
 }
 
 // prepare an array of the configuration data for convenience:
-int* createDataArr(const char* path, counter) {
+int* createDataArr(const char* path, int counter) {
     FILE* file = fopen(path, "r");
     if (file == NULL) {
         perror("Error in: fopen\n");
