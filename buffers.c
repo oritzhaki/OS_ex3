@@ -12,16 +12,6 @@ void initBoundedBuffer(BoundedBuffer* buffer, int size) {
     sem_init(&buffer->mutex, 0, 1);
     sem_init(&buffer->fullSlots, 0, 0);
     sem_init(&buffer->emptySlots, 0, size);
-
-    int mutexValue, fullSlotsValue, emptySlotsValue;
-    sem_getvalue(&buffer->mutex, &mutexValue);
-    sem_getvalue(&buffer->fullSlots, &fullSlotsValue);
-    sem_getvalue(&buffer->emptySlots, &emptySlotsValue);
-
-    printf("after init - Value of buffer->mutex: %d\n", mutexValue);
-    printf("after init - Value of buffer->fullSlots: %d\n", fullSlotsValue);
-    printf("after init - Value of buffer->emptySlots: %d\n", emptySlotsValue);
-    printf("size is %d\n", size);
 }
 
 void pushBoundedBuffer(BoundedBuffer* buffer, char* s) {
