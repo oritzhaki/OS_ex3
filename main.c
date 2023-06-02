@@ -2,11 +2,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <fcntl.h>
 #include "buffers.h"
 #include "actors.h"
 
 
 int runNewsFlow(int* configurationArr, int length){
+    // create producers with bounded buffers and send each producer to work:
+    int numProducers = (length - 1)/3;
+    Producer* producers[numProducers]; // array of n producers
+    BoundedBuffer* producerBuffersArr[numProducers]; // array of n producer buffers
+    pthread_t producersThreads[numProducers]; // array of n producer threads
+    for (int i = 0; i < numProducers; i++) {
+        // Get the data for each producer:
+        int id = configurationArr[i * 3];
+        int numItems = configurationArr[i * 3 + 1];
+        int bufferSize = configurationArr[i * 3 + 2];
+        BoundedBuffer* buff = malloc(sizeof(BoundedBuffer));
+        if (buff == NULL) {
+            perror("Error in: Memory allocation.\n");
+            return -1;
+        }
+        initBoundedBuffer(buff, bufferSize);
+        producerBuffersArr[i] = buff;
+        Producer* prod = malloc(sizeof(Producer));
+        if (prod == NULL) {
+            perror("Error in: Memory allocation.\n");
+            return -1;
+        }
+        // Init producer:
+        prod->buffer = buff;
+        prod->numMsg = numItems;
+        prod->id = id;
+        producers[i] = prod;
+        // Send producer to work:
+        pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
+    }
+
     // Create screen manager with an unbounded queue:
     UnboundedBuffer screenManagerBuffer;
     initUnboundedBuffer(&screenManagerBuffer);
@@ -28,36 +62,6 @@ int runNewsFlow(int* configurationArr, int length){
     coEditorBuffersArr[0] = &coEditorBuffer1;
     coEditorBuffersArr[1] = &coEditorBuffer2;
     coEditorBuffersArr[2] = &coEditorBuffer3;
-
-    // create producers with bounded buffers and send each producer to work:
-    int numProducers = (length - 1)/3;
-    Producer* producers[numProducers]; // array of n producers
-    BoundedBuffer* producerBuffersArr[numProducers]; // array of n producer buffers
-    pthread_t producersThreads[numProducers]; // array of n producer threads
-    for (int i = 0; i < numProducers; i++) {
-        int id = configurationArr[i * 3];
-        int numItems = configurationArr[i * 3 + 1];
-        int bufferSize = configurationArr[i * 3 + 2];
-        BoundedBuffer* buff = malloc(sizeof(BoundedBuffer));
-        if (buff == NULL) {
-            perror("Error in: Memory allocation.\n");
-            return -1;
-        }
-        initBoundedBuffer(buff, bufferSize);
-        producerBuffersArr[i] = buff;
-        Producer* prod = malloc(sizeof(Producer));
-        if (prod == NULL) {
-            perror("Error in: Memory allocation.\n");
-            return -1;
-        }
-        // Init producer:
-        prod->buffer = buff;
-        prod->numMsg = numItems;
-        prod->id = id;
-        producers[i] = prod;
-        // Create the producer thread:
-        pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
-    }
 
     //Create the dispatcher and send to work:
     Dispatcher dispatcher;
