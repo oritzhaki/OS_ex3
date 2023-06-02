@@ -9,74 +9,7 @@
 #include "actors.h"
 
 
-// counts the number of rows in the conf file with data
-int getDataLength(const char* path){
-    FILE* file = fopen(path, "r");
-    if (file == NULL) {
-        perror("Error in: fopen\n");
-        return NULL;
-    }
-    // count the rows with the information (producers + co-editor):
-    int counter = 0;
-    int ch;
-    int enters = 0;
-    while ((ch = fgetc(file)) != EOF) {
-        if (ch == '\n') {
-            enters++;
-            if (enters % 4 == 0) { // every four rows there is an empty row so dont count
-                continue;
-            }
-            counter++;
-        }
-    }
-    counter++; // the last row doesnt end with an enter but still should count it
-    return counter;
-}
-
-// prepare an array of the configuration data for convenience:
-int* createDataArr(const char* path, int counter) {
-    FILE* file = fopen(path, "r");
-    if (file == NULL) {
-        perror("Error in: fopen\n");
-        return NULL;
-    }
-    // create the array of size counter with allocated memory
-    int* valArr = (int*)malloc(counter * sizeof(int));
-    if (valArr == NULL) {
-        perror("Error in: malloc");
-        fclose(file);
-        return NULL;
-    }
-    int i = 0;
-    char line[100]; // max size of line
-    while (fgets(line, sizeof(line), file) != NULL) {
-        if (line[0] != '\n') {  // Skip empty lines
-            int value = atoi(line); // assuming all rows are ints
-            valArr[i] = value;
-            i++;
-        }
-    }
-    fclose(file);
-    return valArr;
-}
-
-
-//program will receive the name of the configuration file from the command line.
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        printf("Invalid argument\n");
-        return -1;
-    }
-
-    // read configuration file and save data in array:
-    const char* filePath = argv[1];
-    int length = getDataLength(filePath);
-    int* configurationArr = createDataArr(filePath, length);
-    if (configurationArr == NULL) {
-        printf("Invalid configuration file\n");
-        return -1;
-    }
-
+int runNewsFlow(int* configurationArr, int length){
     // Create screen manager with an unbounded queue:
     UnboundedBuffer screenManagerBuffer;
     initUnboundedBuffer(&screenManagerBuffer);
@@ -171,3 +104,77 @@ int main(int argc, char* argv[]) {
 }
 
 
+// counts the number of rows in the conf file with data
+int getDataLength(const char* path){
+    FILE* file = fopen(path, "r");
+    if (file == NULL) {
+        perror("Error in: fopen\n");
+        return NULL;
+    }
+    // count the rows with the information (producers + co-editor):
+    int counter = 0;
+    int ch;
+    int enters = 0;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            enters++;
+            if (enters % 4 == 0) { // every four rows there is an empty row so dont count
+                continue;
+            }
+            counter++;
+        }
+    }
+    counter++; // the last row doesnt end with an enter but still should count it
+    return counter;
+}
+
+
+// prepare an array of the configuration data for convenience:
+int* createDataArr(const char* path, int counter) {
+    FILE* file = fopen(path, "r");
+    if (file == NULL) {
+        perror("Error in: fopen\n");
+        return NULL;
+    }
+    // create the array of size counter with allocated memory
+    int* valArr = (int*)malloc(counter * sizeof(int));
+    if (valArr == NULL) {
+        perror("Error in: malloc");
+        fclose(file);
+        return NULL;
+    }
+    int i = 0;
+    char line[100]; // max size of line
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (line[0] != '\n') {  // Skip empty lines
+            int value = atoi(line); // assuming all rows are ints
+            valArr[i] = value;
+            i++;
+        }
+    }
+    fclose(file);
+    return valArr;
+}
+
+
+//program will receive the name of the configuration file from the command line.
+int main(int argc, char* argv[]) {
+    //check num arguments
+    if (argc != 2) {
+        printf("Invalid argument\n");
+        return -1;
+    }
+
+    // read configuration file and save data in array:
+    const char* filePath = argv[1];
+    int length = getDataLength(filePath);
+    int* configurationArr = createDataArr(filePath, length);
+    if (configurationArr == NULL) {
+        return -1;
+    }
+
+    //start sending the news:
+    int status = runNewsFlow(configurationArr, length);
+
+    return status;
+}
