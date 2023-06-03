@@ -30,7 +30,7 @@ typedef struct {
     Node* head;
     Node* tail;
     sem_t mutex;
-    sem_t emptySlots;
+    sem_t fullSlots;
 } UnboundedBuffer;
 
 void initBoundedBuffer(BoundedBuffer* buffer, int size);
