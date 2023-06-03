@@ -17,7 +17,7 @@ int runNewsFlow(int* configurationArr, int length){
     pthread_t producersThreads[numProducers]; // array of n producer threads
     for (int i = 0; i < numProducers; i++) {
         // Get the data for each producer:
-        int id = configurationArr[i * 3];
+        int id = configurationArr[i * 3] - 1;
         int numItems = configurationArr[i * 3 + 1];
         int bufferSize = configurationArr[i * 3 + 2];
         BoundedBuffer* buff = malloc(sizeof(BoundedBuffer));
