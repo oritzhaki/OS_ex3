@@ -41,24 +41,24 @@ int runNewsFlow(int* configurationArr, int length){
         pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
     }
 
-    // Create screen manager with an unbounded queue:
-    UnboundedBuffer screenManagerBuffer;
-    initUnboundedBuffer(&screenManagerBuffer);
+    // Create screen manager with an bounded queue:
+    int sMbufferSize = configurationArr[length - 1]; // last in arr
+    BoundedBuffer screenManagerBuffer;
+    initBoundedBuffer(&screenManagerBuffer, sMbufferSize);
     ScreenManager ScreenManager = {&screenManagerBuffer};
 
-    // Create co-editors with bounded queues:
-    int coEditorSize = configurationArr[length - 1]; // last in arr
-    BoundedBuffer coEditorBuffer1; //S
-    initBoundedBuffer(&coEditorBuffer1, coEditorSize);
+    // Create co-editors with unbounded queues:
+    UnboundedBuffer coEditorBuffer1; //S
+    initUnboundedBuffer(&coEditorBuffer1);
     CoEditor coEditor1 = {&coEditorBuffer1, 1, &screenManagerBuffer};
-    BoundedBuffer coEditorBuffer2; //N
-    initBoundedBuffer(&coEditorBuffer2, coEditorSize);
+    UnboundedBuffer coEditorBuffer2; //N
+    initUnboundedBuffer(&coEditorBuffer2);
     CoEditor coEditor2 = {&coEditorBuffer2, 2, &screenManagerBuffer};
-    BoundedBuffer coEditorBuffer3; //W
-    initBoundedBuffer(&coEditorBuffer3, coEditorSize);
+    UnboundedBuffer coEditorBuffer3; //W
+    initUnboundedBuffer(&coEditorBuffer3);
     CoEditor coEditor3 = {&coEditorBuffer3, 3, &screenManagerBuffer};
     // create an array of the co-editor buffers:
-    BoundedBuffer* coEditorBuffersArr[3];
+    UnboundedBuffer* coEditorBuffersArr[3];
     coEditorBuffersArr[0] = &coEditorBuffer1;
     coEditorBuffersArr[1] = &coEditorBuffer2;
     coEditorBuffersArr[2] = &coEditorBuffer3;
@@ -97,9 +97,9 @@ int runNewsFlow(int* configurationArr, int length){
     pthread_join(coEditorT3, NULL);
     pthread_join(screenManagerThread, NULL);  // Wait for manager thread to finish
     for (int i = 0; i < 3 ; i++) {
-        destroyBoundedBuffer(coEditorBuffersArr[i]);
+        destroyUnboundedBuffer(coEditorBuffersArr[i]);
     }
-    destroyUnboundedBuffer(&screenManagerBuffer);
+    destroyBoundedBuffer(&screenManagerBuffer);
     free(configurationArr);
     return 0;
 }
