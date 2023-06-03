@@ -24,21 +24,21 @@ typedef struct {
 typedef struct {
     BoundedBuffer** producerBuffers; //has access
     int numProducers;
-    BoundedBuffer** coEditorBuffers; //has access
+    UnboundedBuffer** coEditorBuffers; //has access
 } Dispatcher;
 
 
 // Co-Editor struct:
 typedef struct {
-    BoundedBuffer* buffer;
+    UnboundedBuffer* buffer;
     int id;
-    UnboundedBuffer* screenBuffer; //has access
+    BoundedBuffer* screenBuffer; //has access
 } CoEditor;
 
 
 // Screen Manager struct:
 typedef struct {
-    UnboundedBuffer* buffer;
+    BoundedBuffer* buffer;
 } ScreenManager;
 
 
