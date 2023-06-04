@@ -8,7 +8,7 @@ void* produce(void* arg) {
     int newsCount = 0;
     int weatherCount = 0;
     for (int i = 0; i < producer->numMsg; i++) {
-        //usleep(50000);
+        usleep(50000);
         char message[100];
         // Generate a random number between 1 and 3
         int randomNumber = rand() % 3 + 1;
@@ -93,9 +93,9 @@ void* edit(void* arg) {
     CoEditor* coEd = (CoEditor*)arg;
     while (true) {
         // Pop a message from the unbounded buffer
-        if (isUnboundedBufferEmpty(coEd->buffer)){
-            continue;
-        }
+//         if (isUnboundedBufferEmpty(coEd->buffer)){
+//             continue;
+//         }
         char* message = popUnboundedBuffer(coEd->buffer);
         if (strcmp(message, "Done") == 0) {  // Exit the loop if the message is "Done"
             pushBoundedBuffer(coEd->screenBuffer, message); // push without waiting
