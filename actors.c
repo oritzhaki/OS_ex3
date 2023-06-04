@@ -85,8 +85,8 @@ void* dispatch(void* arg) {
                     }
                 }
                 free(type);
+                free(message);
             }
-            free(message);
         }
     }
     return NULL;
