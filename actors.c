@@ -130,18 +130,19 @@ void* printer(void* arg) {
         // Pop a message from the unbounded buffer:
         char* message = popBoundedBuffer(screenManager->buffer);\
         if (!message) {
+            free(message);
             continue;
         }
         // Print the message
         if (strcmp(message, "Done") != 0) {
             printf("%s\n", message);
+            free(message);
         } else {
             doneCount++;
-            // printf("ScreenManager received done%d", doneCount);
+            free(message);
             if (doneCount == 3) { // after three "Done"'s, exit
                 char* doneMessage = "DONE";
                 printf("%s\n", doneMessage);
-                free(message);
                 break;
             }
         }
