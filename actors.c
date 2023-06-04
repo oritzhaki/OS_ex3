@@ -130,7 +130,7 @@ void* printer(void* arg) {
             free(message);
         } else {
             doneCount++;
-            //free(message);
+            free(message);
             if (doneCount == 3) { // after three "Done"'s, exit
                 char* doneMessage = "DONE";
                 printf("%s\n", doneMessage);
