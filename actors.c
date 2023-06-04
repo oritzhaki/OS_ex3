@@ -119,11 +119,11 @@ void* printer(void* arg) {
     int doneCount = 0;
     while (true) {
         // Pop a message from the unbounded buffer:
-        char* message = popBoundedBuffer(screenManager->buffer);\
-        if (!message) {
-            free(message);
-            continue;
-        }
+        char* message = popBoundedBuffer(screenManager->buffer);
+//         if (!message) {
+//             free(message);
+//             continue;
+//         }
         // Print the message
         if (strcmp(message, "Done") != 0) {
             printf("%s\n", message);
