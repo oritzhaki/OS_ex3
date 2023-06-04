@@ -29,8 +29,7 @@ void* produce(void* arg) {
         }
         pushBoundedBuffer(producer->buffer, message); // Insert the message into the bounded buffer
     }
-    char doneMessage[100];
-    snprintf(doneMessage, sizeof(doneMessage), "Done");
+    char* doneMessage = "Done";
     pushBoundedBuffer(producer->buffer, doneMessage); // Insert the done message into the bounded buffer
     return NULL;
 }
