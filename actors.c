@@ -93,9 +93,9 @@ void* edit(void* arg) {
     CoEditor* coEd = (CoEditor*)arg;
     while (true) {
         // Pop a message from the unbounded buffer
-//         if (isUnboundedBufferEmpty(coEd->buffer)){
-//             continue;
-//         }
+        if (isUnboundedBufferEmpty(coEd->buffer)){
+            continue;
+        }
         char* message = popUnboundedBuffer(coEd->buffer);
         if (strcmp(message, "Done") == 0) {  // Exit the loop if the message is "Done"
             pushBoundedBuffer(coEd->screenBuffer, message); // push without waiting
