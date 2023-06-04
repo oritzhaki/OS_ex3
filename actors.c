@@ -42,7 +42,6 @@ void* dispatch(void* arg) {
     while (true) { // go over producer buffers in RR
         if (allDone == dispatcher->numProducers) { //check if done
             char* doneMessage = "Done";
-//             printf("Dispatcher dispatched DONE: %d\n", allDone);
             for(int i=0; i < 3; i++){ //send done message to the co-editors
                 pushUnboundedBuffer(dispatcher->coEditorBuffers[i], doneMessage);
             }
@@ -75,13 +74,10 @@ void* dispatch(void* arg) {
                 if (type != NULL) {
                     if (strcmp(type, "SPORTS") == 0) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[0], message);
-                        // printf("Dispatcher dispatched: %s to: 1\n", message);
                     } else if (strcmp(type, "NEWS") == 0) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[1], message);
-                        // printf("Dispatcher dispatched: %s to: 2\n", message);
                     } else if (strcmp(type, "WEATHER") == 0) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[2], message);
-                        // printf("Dispatcher dispatched: %s to: 3\n", message);
                     }
                 }
                 free(type);
@@ -103,18 +99,14 @@ void* edit(void* arg) {
         }
         char* message = popUnboundedBuffer(coEd->buffer);
         if (strcmp(message, "Done") == 0) {  // Exit the loop if the message is "Done"
-//            printf("CoEditor %d received: %s\n", coEd->id, message);//////////////////////////////
             pushBoundedBuffer(coEd->screenBuffer, message); // push without waiting
-//            printf("CoEditor %d pushed: %s\n", coEd->id, message);//////////////////////////////
             free(message);
             break; //no more messages of this type
         }
         // Block for 0.1 second:
         usleep(100000);
-//        printf("CoEditor %d received: %s\n", coEd->id, message);//////////////////////////////
         // Push the message to the screen manager unbounded buffer
         pushBoundedBuffer(coEd->screenBuffer, message);
-//        printf("CoEditor %d pushed: %s\n", coEd->id, message);//////////////////////////////
         free(message);
     }
     return NULL;
@@ -125,7 +117,6 @@ void* edit(void* arg) {
 void* printer(void* arg) {
     ScreenManager* screenManager = (ScreenManager*)arg;
     int doneCount = 0;
-    //usleep(2000000);
     while (true) {
         // Pop a message from the unbounded buffer:
         char* message = popBoundedBuffer(screenManager->buffer);\
