@@ -29,7 +29,6 @@ void pushBoundedBuffer(BoundedBuffer* buffer, char* s) {
     sem_wait(&buffer->emptySlots); //ensures that the consumer waits if the buffer is full.
     sem_wait(&buffer->mutex); //protect critical sections of the code
 
-    printf("in push bounded: %s\n", s);
     buffer->buffer[buffer->rear] = strdup(s);
     buffer->rear = (buffer->rear + 1) % buffer->size; //cyclic
 
