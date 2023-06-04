@@ -7,8 +7,9 @@ void* produce(void* arg) {
     int sportsCount = 0;
     int newsCount = 0;
     int weatherCount = 0;
+    char** newsArr = malloc((producer->numMsg + 1) * sizeof(char*)); // add 1 for "DONE" at the end
     for (int i = 0; i < producer->numMsg; i++) {
-        usleep(50000);
+        //usleep(50000);
         char message[100];
         // Generate a random number between 1 and 3
         int randomNumber = rand() % 3 + 1;
@@ -27,12 +28,18 @@ void* produce(void* arg) {
                 weatherCount++;;
                 break;
         }
-        pushBoundedBuffer(producer->buffer, message); // Insert the message into the bounded buffer
-//        printf("Producer produced: %s\n", message);/////////////////////////
+        //pushBoundedBuffer(producer->buffer, message); // Insert the message into the bounded buffer
+        newsArr[i] = message;
     }
     char doneMessage[100];
     snprintf(doneMessage, sizeof(doneMessage), "Done");
-    pushBoundedBuffer(producer->buffer, doneMessage); // Insert the done message into the bounded buffer
+    newsArr[producer->numMsg] = doneMessage;
+    int doneflag = producer->numMsg + 1;
+    for (int i = 0; doneflag != 0 ; i++){
+        pushBoundedBuffer(producer->buffer, newsArr[i]);
+        doneflag--;
+    }
+    //pushBoundedBuffer(producer->buffer, doneMessage); // Insert the done message into the bounded buffer
     return NULL;
 }
 
