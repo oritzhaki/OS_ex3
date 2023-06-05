@@ -32,23 +32,14 @@ typedef struct {
 } UnboundedBuffer;
 
 void initBoundedBuffer(BoundedBuffer* buffer, int size);
-
 void pushBoundedBuffer(BoundedBuffer* buffer, char* s);
-
 char* popBoundedBuffer(BoundedBuffer* buffer);
-
 void destroyBoundedBuffer(BoundedBuffer* buffer);
-
 int isBoundedBufferEmpty(BoundedBuffer* buffer);
-
 void initUnboundedBuffer(UnboundedBuffer* buffer);
-
 void pushUnboundedBuffer(UnboundedBuffer* buffer, char* s);
-
 char* popUnboundedBuffer(UnboundedBuffer* buffer);
-
 bool isUnboundedBufferEmpty(UnboundedBuffer* buffer);
-
 void destroyUnboundedBuffer(UnboundedBuffer* buffer);
 
 #endif  // BUFFERS_H
