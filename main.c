@@ -1,6 +1,5 @@
 #include <pthread.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include "buffers.h"
@@ -112,12 +111,18 @@ int getDataLength(const char* path){
     }
     // count the rows with the information (producers + co-editor):
     int counter = 0;
-    int id, newsCount, bufferSize;
-    while (fscanf(file, "%d %d %d", &id, &newsCount, &bufferSize) == 3) {
-        counter = counter + 3;
+    int ch;
+    int enters = 0;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            enters++;
+            if (enters % 4 == 0) { // every four rows there is an empty row so dont count
+                continue;
+            }
+            counter++;
+        }
     }
-    counter++; // the last row doesnt end with an enter but still should count it - on planet not needed!
-    fclose(file);
+    //counter++; // the last row doesnt end with an enter but still should count it - on planet not needed!
     return counter;
 }
 
