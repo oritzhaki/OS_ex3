@@ -4,14 +4,12 @@
 //The producers job: to produce types of news and add them to their buffers
 void* produce(void* arg) {
     Producer* producer = (Producer*)arg;
-    int sportsCount = 0;
-    int newsCount = 0;
-    int weatherCount = 0;
+    int sportsCount = 0, newsCount = 0, weatherCount = 0;
     for (int i = 0; i < producer->numMsg; i++) {
         usleep(50000);
-        char message[100];
         // Generate a random number between 1 and 3
         int randomNumber = rand() % 3 + 1;
+        char message[100];
         // Create the message according to the number:
         switch (randomNumber) {
             case 1:
@@ -44,7 +42,7 @@ void* dispatch(void* arg) {
             for(int i=0; i < 3; i++){ //send done message to the co-editors
                 pushUnboundedBuffer(dispatcher->coEditorBuffers[i], doneMessage);
             }
-            break;
+            break; //finnished work
         }
         for (int i = 0; i < dispatcher->numProducers; i++) { //check each buffer in its turn and check if its empty
             BoundedBuffer* producerBuffer = dispatcher->producerBuffers[i];
@@ -54,12 +52,12 @@ void* dispatch(void* arg) {
             // if not empty, remove a message from the bounded buffer
             char* message = popBoundedBuffer(producerBuffer);
             if (strcmp(message, "Done") == 0) {
-                allDone++;
+                allDone++; //count the Done messages
             } else {
                 //getting the type of news (the third token):
-                char* M = strdup(message);
+                char* temp = strdup(message);
                 char* type = NULL;
-                char* token = strtok(M, " ");
+                char* token = strtok(temp, " ");
                 int spaces = 0;
                 while (token != NULL) {
                     spaces++;
@@ -78,7 +76,7 @@ void* dispatch(void* arg) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[2], message);
                     }
                 }
-                free(M);
+                free(temp);
                 free(type);
                 free(message);
             }
@@ -104,7 +102,7 @@ void* edit(void* arg) {
         }
         // Block for 0.1 second:
         usleep(100000);
-        // Push the message to the screen manager unbounded buffer
+        // Push the message to the screen manager unbounded buffer:
         pushBoundedBuffer(coEd->screenBuffer, message);
         free(message);
     }
@@ -119,12 +117,7 @@ void* printer(void* arg) {
     while (true) {
         // Pop a message from the unbounded buffer:
         char* message = popBoundedBuffer(screenManager->buffer);
-//         if (!message) {
-//             free(message);
-//             continue;
-//         }
-        // Print the message
-        if (strcmp(message, "Done") != 0) {
+        if (strcmp(message, "Done") != 0) { //if not Done, print the message:
             printf("%s\n", message);
             free(message);
         } else {
@@ -132,7 +125,8 @@ void* printer(void* arg) {
             free(message);
             if (doneCount == 3) { // after three "Done"'s, exit
                 char* doneMessage = "DONE";
-                printf("%s\n", doneMessage);
+                //print the final message:
+                printf("%s\n", doneMessage); 
                 break;
             }
         }
