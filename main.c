@@ -2,9 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <semaphore.h>
-#include <fcntl.h>
 #include "buffers.h"
 #include "actors.h"
 
@@ -41,7 +38,7 @@ int runNewsFlow(int* configurationArr, int length){
         pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
     }
 
-    // Create screen manager with an bounded queue:
+    // Create screen manager with a bounded queue:
     int sMbufferSize = configurationArr[length - 1]; // last in arr
     BoundedBuffer screenManagerBuffer;
     initBoundedBuffer(&screenManagerBuffer, sMbufferSize);
@@ -125,7 +122,7 @@ int getDataLength(const char* path){
             counter++;
         }
     }
-    //counter++; // the last row doesnt end with an enter but still should count it
+    counter++; // the last row doesnt end with an enter but still should count it
     return counter;
 }
 
