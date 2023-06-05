@@ -44,6 +44,26 @@ void pushBoundedBuffer(BoundedBuffer* buffer, char* s) {
     sem_post(&buffer->fullSlots);
 }
 
+// pushes an element into the end of the unbounded queue (FIFO)
+void pushUnboundedBuffer(UnboundedBuffer* buffer, char* s) {
+    Node* newNode = (Node*)malloc(sizeof(Node)); //each element is allocated memory
+    newNode->data = strdup(s);
+    newNode->next = NULL;
+
+    sem_wait(&buffer->mutex); //protect critical sections of the code
+
+    if (buffer->tail == NULL) {
+        buffer->head = newNode;
+        buffer->tail = newNode;
+    } else {
+        buffer->tail->next = newNode;
+        buffer->tail = newNode;
+    }
+
+    sem_post(&buffer->fullSlots); //not empty
+    sem_post(&buffer->mutex);
+}
+
 // pops an element from the front of the bounded queue (FIFO) if not empty
 char* popBoundedBuffer(BoundedBuffer* buffer) {
     sem_wait(&buffer->fullSlots); //ensures that the consumer waits if the buffer is empty.
@@ -74,34 +94,6 @@ char* popUnboundedBuffer(UnboundedBuffer* buffer) {
     return item;
 }
 
-// Destroys semaphores an frees memory
-void destroyBoundedBuffer(BoundedBuffer* buffer) {
-    sem_destroy(&buffer->mutex);
-    sem_destroy(&buffer->fullSlots);
-    sem_destroy(&buffer->emptySlots);
-    free(buffer->buffer);
-}
-
-// pushes an element into the end of the unbounded queue (FIFO)
-void pushUnboundedBuffer(UnboundedBuffer* buffer, char* s) {
-    Node* newNode = (Node*)malloc(sizeof(Node)); //each element is allocated memory
-    newNode->data = strdup(s);
-    newNode->next = NULL;
-
-    sem_wait(&buffer->mutex); //protect critical sections of the code
-
-    if (buffer->tail == NULL) {
-        buffer->head = newNode;
-        buffer->tail = newNode;
-    } else {
-        buffer->tail->next = newNode;
-        buffer->tail = newNode;
-    }
-
-    sem_post(&buffer->fullSlots); //not empty
-    sem_post(&buffer->mutex);
-}
-
 // checks if the bounded queue is empty
 int isBoundedBufferEmpty(BoundedBuffer* buffer) {
     int isEmpty;
@@ -117,6 +109,14 @@ bool isUnboundedBufferEmpty(UnboundedBuffer* buffer) {
     bool empty = (buffer->head == NULL);
     sem_post(&buffer->mutex);
     return empty;
+}
+
+// Destroys semaphores an frees memory
+void destroyBoundedBuffer(BoundedBuffer* buffer) {
+    sem_destroy(&buffer->mutex);
+    sem_destroy(&buffer->fullSlots);
+    sem_destroy(&buffer->emptySlots);
+    free(buffer->buffer);
 }
 
 //destroys semaphores and frees memory
