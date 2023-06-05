@@ -33,6 +33,7 @@ int runNewsFlow(int* configurationArr, int length){
         prod->buffer = buff;
         prod->numMsg = numItems;
         prod->id = id;
+        prod->isDone = 0;
         producers[i] = prod;
         // Send producer to work:
         pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
