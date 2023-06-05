@@ -17,6 +17,7 @@ typedef struct {
     BoundedBuffer* buffer;
     int numMsg;
     int id;
+    int isDone;
 } Producer;
 
 
