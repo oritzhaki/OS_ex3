@@ -122,7 +122,7 @@ int getDataLength(const char* path){
             counter++;
         }
     }
-    counter++; // the last row doesnt end with an enter but still should count it
+    //counter++; // the last row doesnt end with an enter but still should count it
     return counter;
 }
 
