@@ -69,7 +69,6 @@ void* dispatch(void* arg) {
                     }
                     token = strtok(NULL, " ");
                 }
-                free(M);
                 if (type != NULL) {
                     if (strcmp(type, "SPORTS") == 0) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[0], message);
@@ -79,6 +78,7 @@ void* dispatch(void* arg) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[2], message);
                     }
                 }
+                free(M);
                 free(type);
                 free(message);
             }
