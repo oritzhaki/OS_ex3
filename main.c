@@ -6,7 +6,7 @@
 #include "buffers.h"
 #include "actors.h"
 
-
+//start spreading the news and handle actors
 int runNewsFlow(int* configurationArr, int length){
     // create producers with bounded buffers and send each producer to work:
     int numProducers = (length - 1)/3;
