@@ -1,11 +1,11 @@
 #ifndef ACTORS_H
 #define ACTORS_H
 
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <semaphore.h>
 #include "buffers.h"
 
@@ -14,24 +14,24 @@
 
 // Producer struct:
 typedef struct {
-    BoundedBuffer* buffer;
-    int numMsg;
     int id;
+    int numMsg;
+    BoundedBuffer* buffer;
 } Producer;
 
 
 // Dispatcher struct:
 typedef struct {
-    BoundedBuffer** producerBuffers; //has access
     int numProducers;
+    BoundedBuffer** producerBuffers; //has access
     UnboundedBuffer** coEditorBuffers; //has access
 } Dispatcher;
 
 
 // Co-Editor struct:
 typedef struct {
-    UnboundedBuffer* buffer;
     int id;
+    UnboundedBuffer* buffer;
     BoundedBuffer* screenBuffer; //has access
 } CoEditor;
 
