@@ -44,8 +44,11 @@ typedef struct {
 
 //Jobs:
 void* produce(void* arg);
+
 void* dispatch(void* arg);
+
 void* edit(void* arg);
+
 void* printer(void* arg);
 
 #endif
