@@ -3,8 +3,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include "buffers.h"
 #include "actors.h"
+#include "buffers.h"
+
 
 //start spreading the news and handle actors
 int runNewsFlow(int* configurationArr, int length){
@@ -24,7 +25,6 @@ int runNewsFlow(int* configurationArr, int length){
             return -1;
         }
         initBoundedBuffer(buff, bufferSize);
-        producerBuffersArr[i] = buff;
         Producer* prod = malloc(sizeof(Producer));
         if (prod == NULL) {
             perror("Error in: Memory allocation.\n");
@@ -34,6 +34,7 @@ int runNewsFlow(int* configurationArr, int length){
         prod->id = id;
         prod->numMsg = numItems;
         prod->buffer = buff;
+        producerBuffersArr[i] = buff;
         producers[i] = prod;
         // Send producer to work:
         pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
