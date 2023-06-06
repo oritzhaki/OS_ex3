@@ -31,9 +31,9 @@ int runNewsFlow(int* configurationArr, int length){
             return -1;
         }
         // Init producer:
-        prod->buffer = buff;
-        prod->numMsg = numItems;
         prod->id = id;
+        prod->numMsg = numItems;
+        prod->buffer = buff;
         producers[i] = prod;
         // Send producer to work:
         pthread_create(&producersThreads[i], NULL, produce, (void*)prod);
@@ -48,13 +48,13 @@ int runNewsFlow(int* configurationArr, int length){
     // Create co-editors with unbounded queues:
     UnboundedBuffer coEditorBuffer1; //S
     initUnboundedBuffer(&coEditorBuffer1);
-    CoEditor coEditor1 = {&coEditorBuffer1, 1, &screenManagerBuffer};
+    CoEditor coEditor1 = {1, &coEditorBuffer1, &screenManagerBuffer};
     UnboundedBuffer coEditorBuffer2; //N
     initUnboundedBuffer(&coEditorBuffer2);
-    CoEditor coEditor2 = {&coEditorBuffer2, 2, &screenManagerBuffer};
+    CoEditor coEditor2 = {2, &coEditorBuffer2, &screenManagerBuffer};
     UnboundedBuffer coEditorBuffer3; //W
     initUnboundedBuffer(&coEditorBuffer3);
-    CoEditor coEditor3 = {&coEditorBuffer3, 3, &screenManagerBuffer};
+    CoEditor coEditor3 = {3, &coEditorBuffer3, &screenManagerBuffer};
     // create an array of the co-editor buffers:
     UnboundedBuffer* coEditorBuffersArr[3];
     coEditorBuffersArr[0] = &coEditorBuffer1;
