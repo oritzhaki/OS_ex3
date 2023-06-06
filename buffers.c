@@ -2,8 +2,11 @@
 
 //there are two types of buffers: bounded and unbounded. both structs, unbounded is a linked list
 
+// BOUNDED QUEUE FUNCTIONS:
+
 // initializes the bounded queue with a given size
 void initBoundedBuffer(BoundedBuffer* buffer, int size) {
+    //allocate memory according to the size:
     buffer->buffer = (char**)malloc(size * sizeof(char*));
     buffer->front = 0;
     buffer->rear = 0;
@@ -66,6 +69,8 @@ int isBoundedBufferEmpty(BoundedBuffer* buffer) {
     return isEmpty;
 }
 
+// UNBOUNDED QUEUE FUNCTIONS:
+
 // initializes unbounded queue
 void initUnboundedBuffer(UnboundedBuffer* buffer) {
     buffer->head = NULL; //empty linked list
@@ -123,7 +128,6 @@ bool isUnboundedBufferEmpty(UnboundedBuffer* buffer) {
 void destroyUnboundedBuffer(UnboundedBuffer* buffer) {
     sem_destroy(&buffer->mutex);
     sem_destroy(&buffer->fullSlots);
-
     Node* current = buffer->head;
     while (current != NULL) {
         Node* next = current->next;
