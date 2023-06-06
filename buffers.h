@@ -1,5 +1,6 @@
 #ifndef BUFFERS_H
 #define BUFFERS_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,10 +8,6 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-typedef struct Node { // for linked list
-    char* data;
-    struct Node* next;
-} Node;
 
 // bounded queue is an array with head, tail, size and personal semaphores to control traffic
 typedef struct {
@@ -22,6 +19,11 @@ typedef struct {
     sem_t fullSlots;
     sem_t emptySlots;
 } BoundedBuffer;
+
+typedef struct Node { // for linked list
+    char* data;
+    struct Node* next;
+} Node;
 
 // unbounded queue is a linked list with head, tail and personal semaphores to control traffic
 typedef struct {
