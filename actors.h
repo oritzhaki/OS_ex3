@@ -14,24 +14,24 @@
 
 // Producer struct:
 typedef struct {
-    int id;
-    int numMsg;
     BoundedBuffer* buffer;
+    int numMsg;
+    int id;
 } Producer;
 
 
 // Dispatcher struct:
 typedef struct {
-    int numProducers;
     BoundedBuffer** producerBuffers; //has access
+    int numProducers;
     UnboundedBuffer** coEditorBuffers; //has access
 } Dispatcher;
 
 
 // Co-Editor struct:
 typedef struct {
-    int id;
     UnboundedBuffer* buffer;
+    int id;
     BoundedBuffer* screenBuffer; //has access
 } CoEditor;
 
@@ -44,11 +44,8 @@ typedef struct {
 
 //Jobs:
 void* produce(void* arg);
-
 void* dispatch(void* arg);
-
 void* edit(void* arg);
-
 void* printer(void* arg);
 
 #endif
