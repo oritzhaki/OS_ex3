@@ -55,9 +55,9 @@ void* dispatch(void* arg) {
                 allDone++;
             } else {
                 //getting the type of news (the third token):
-                char* M = strdup(message);
+                char* temp = strdup(message);
                 char* type = NULL;
-                char* token = strtok(M, " ");
+                char* token = strtok(temp, " ");
                 int spaces = 0;
                 while (token != NULL) {
                     spaces++;
@@ -76,7 +76,7 @@ void* dispatch(void* arg) {
                         pushUnboundedBuffer(dispatcher->coEditorBuffers[2], message);
                     }
                 }
-                free(M);
+                free(temp);
                 free(type);
                 free(message);
             }
@@ -117,11 +117,7 @@ void* printer(void* arg) {
     while (true) {
         // Pop a message from the unbounded buffer:
         char* message = popBoundedBuffer(screenManager->buffer);
-//         if (!message) {
-//             free(message);
-//             continue;
-//         }
-        // Print the message
+        // Print the message to screen
         if (strcmp(message, "Done") != 0) {
             printf("%s\n", message);
             free(message);
@@ -134,7 +130,6 @@ void* printer(void* arg) {
                 break;
             }
         }
-
     }
     return NULL;
 }
